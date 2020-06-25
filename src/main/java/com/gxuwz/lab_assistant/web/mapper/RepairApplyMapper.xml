@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<!--     
+    namespace：必须与对应的接口全类名一致  UserMapper.java  
+    id ：必须与对应接口的某个对应的方法名一致即必须要和UserMapper.java接口中的方法同名。  
+ -->    
+ <mapper namespace="com.gxuwz.lab_assistant.web.mapper.RepairApplyMapper">  
+   
+     <insert id="add" parameterType="RepairApplyAndSysUser">  
+        insert into repair_apply(rep_app_id,device_id,device_name,model_number,hitch_depict,user_id) values(#{repAppId},#{deviceId},#{deviceName},#{modelNumber},#{hitchDepict},#{userId})  
+    </insert>  
+    
+    <update id="updateRepAppIdAndUserId">
+        update repair_apply set user_id=#{userId} where rep_app_id=#{repAppId}    
+    </update>
+    
+    <!--<update id="update" parameterType="User">    
+        update t_user set user_name=#{userName},user_age=#{age} where user_id=#{id}    
+    </update>   
+      
+    <delete id="delete" parameterType="int">    
+        delete from t_user where user_id=#{id}    
+    </delete>    
+        
+     mybsits_config中配置的alias类别名,也可直接配置resultType为类路径       -->  
+     
+     <select id="findAllMySelf" resultType="RepairApply">
+        select rep_app_id repAppId,device_id deviceId,device_name deviceName,model_number modelNumber,hitch_depict hitchDepict,repair_date repairDate,repair_name repairName
+        from sys_user u,repair_apply ra
+        where u.user_id=#{userId} and ra.user_id=u.user_id
+    </select>
+      
+ </mapper>

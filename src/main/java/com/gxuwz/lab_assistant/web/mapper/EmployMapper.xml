@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"     
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">    
+<!--     
+    namespace：必须与对应的接口全类名一致  UserMapper.java  
+    id ：必须与对应接口的某个对应的方法名一致即必须要和UserMapper.java接口中的方法同名。  
+ -->    
+ <mapper namespace="com.gxuwz.lab_assistant.web.mapper.EmployMapper">  
+   
+    <!-- <insert id="save" parameterType="User">  
+        insert into t_user(user_name,user_age) values(#{userName},#{age})  
+    </insert>  
+      
+    <update id="update" parameterType="User">    
+        update t_user set user_name=#{userName},user_age=#{age} where user_id=#{id}    
+    </update>   
+      
+    <delete id="delete" parameterType="int">    
+        delete from t_user where user_id=#{id}    
+    </delete>    
+        
+     mybsits_config中配置的alias类别名,也可直接配置resultType为类路径       -->
+     
+     <insert id="addLabAssiRole">  
+        insert into user_role(user_id,role_id) 
+        values(#{userId},#{roleId})  
+    </insert>
+    
+    <delete id="deleteRole" parameterType="Role">
+        delete from user_role where user_id=#{userId} and role_id=#{roleId}    
+    </delete> 
+     
+     <insert id="employ" parameterType="Employ">  
+        insert into employ(rec_plan_id,user_id,rec_plan_name,post_name,lab_id,lab_name,technica,stu_id,stu_name,major_id,inst_id,class_id,grade,phone,email,per_pic) 
+        values(#{recPlanId},#{userId},#{recPlanName},#{postName},#{labId},#{labName},#{technica},#{stuId},#{stuName},#{majorId},#{instId},#{classId},#{grade},#{phone},#{email},#{perPic})  
+    </insert>
+    
+    <select id="findAllMySelf" resultType="Employ">
+        select em.rec_plan_id,em.user_id,em.rec_plan_name,em.post_name,em.lab_id,em.lab_name,em.technica,em.stu_id,em.stu_name,em.major_id,em.inst_id,em.class_id,em.grade,em.phone,em.email,em.per_pic
+        from employ em,recruitment_plan rp
+        where rp.user_id=#{userId} and rp.rec_plan_id=em.rec_plan_id
+        ORDER BY rp.rec_plan_id ASC
+    </select>
+      
+ </mapper>

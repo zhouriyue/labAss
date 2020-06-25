@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<!--     
+    namespace：必须与对应的接口全类名一致  UserMapper.java  
+    id ：必须与对应接口的某个对应的方法名一致即必须要和UserMapper.java接口中的方法同名。  
+ -->    
+ <mapper namespace="com.gxuwz.lab_assistant.web.mapper.RecruitmentPlanMapper"> 
+     <resultMap id="RP" type="com.gxuwz.lab_assistant.web.model.entity.RecruitmentPlan">
+        <id column="rec_plan_id" property="recPlanId" jdbcType="VARCHAR"/>
+        <result column="rec_plan_name" property="recPlanName" jdbcType="VARCHAR"/>
+        <result column="post_name" property="postName" jdbcType="VARCHAR"/>
+        <result column="rec_number" property="recNumber"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="lab_tach_name" property="labTechName" jdbcType="VARCHAR"/>
+        <result column="surplus_number" property="surplusNumber"/>
+        <result column="audis" property="audis" jdbcType="VARCHAR"/>
+        <result column="lab_id" property="labId" jdbcType="VARCHAR"/>
+        <result column="lab_name" property="labName" jdbcType="VARCHAR"/>
+        <collection property="enrollInfos" resultMap="PEnrollInfos"/>
+        <collection property="sysUser" resultMap="RPS"/>
+    </resultMap>
+    
+    <resultMap id="RPE" type="com.gxuwz.lab_assistant.web.model.entity.RecruitmentPlan">
+        <id column="rec_plan_id" property="recPlanId" jdbcType="VARCHAR"/>
+        <result column="rec_plan_name" property="recPlanName" jdbcType="VARCHAR"/>
+        <result column="post_name" property="postName" jdbcType="VARCHAR"/>
+        <result column="rec_number" property="recNumber"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="lab_tach_name" property="labTechName" jdbcType="VARCHAR"/>
+        <result column="surplus_number" property="surplusNumber"/>
+        <result column="audis" property="audis" jdbcType="VARCHAR"/>
+        <result column="lab_id" property="labId" jdbcType="VARCHAR"/>
+        <result column="lab_name" property="labName" jdbcType="VARCHAR"/>
+        <collection property="enrollInfos" resultMap="PEnrollInfos"/>
+    </resultMap>
+    
+    <resultMap id="PEnrollInfos" type="EnrollInfo">
+    
+        <id column="en_info_id" property="enInfoId" jdbcType="VARCHAR"/>
+        <result column="en_info_time" property="enInfoTime" jdbcType="VARCHAR"/>
+        <result column="technica" property="technica" jdbcType="VARCHAR"/>
+        <result column="lab_id" property="labId" jdbcType="VARCHAR"/>
+        <result column="lab_name" property="labName" jdbcType="VARCHAR"/>
+        <collection property="sysUser" resultMap="RPS"/>
+    </resultMap>
+ 
+     <resultMap id="RPS" type="com.gxuwz.lab_assistant.domain.SysUser">
+        <id column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="user_pwd" property="userPwd" jdbcType="VARCHAR"/>
+        <result column="stu_id" property="stuId" jdbcType="VARCHAR"/>
+        <result column="stu_name" property="stuName" jdbcType="VARCHAR"/>
+        <result column="major_id" property="majorId" jdbcType="VARCHAR"/>
+        <result column="inst_id" property="instId" jdbcType="VARCHAR"/>
+        <result column="class_id" property="classId" jdbcType="VARCHAR"/>
+        <result column="grade" property="grade" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="per_pic" property="perPic" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <update id="updateSurplusNumber" parameterType="RecPlanIdAndSurplusNumber">    
+        update recruitment_plan set surplus_number=#{surplusNumber} where rec_plan_id=#{recPlanId}    
+    </update>
+    
+    <update id="through" parameterType="RecruitmentPlan">    
+        update recruitment_plan set audis=#{audis} where rec_plan_id=#{recPlanId}    
+    </update>
+     
+    <select id="findAll" resultType="RecruitmentPlan">    
+        select rec_plan_id recPlanId,rec_plan_name recPlanName,post_name postName,rec_number recNumber,department,lab_tach_name labTachName,
+        surplus_number surplusNumber,lab_id,lab_name
+        from recruitment_plan rp,sys_user u 
+        where u.user_id=rp.user_id
+    </select>
+    
+    <select id="findRPEnroll" resultMap="RPE">    
+        select rp.rec_plan_id,rec_plan_name,post_name,rec_number,department,lab_tach_name,
+        surplus_number,audis,einfo.en_info_id,en_info_time,technica,einfo.lab_id,einfo.lab_name,
+        u.user_id,stu_id,stu_name,major_id,inst_id,class_id,grade,phone,email,per_pic
+        from recruitment_plan rp,enroll_info einfo,sys_user u
+        where einfo.rec_plan_id=rp.rec_plan_id and rp.rec_plan_id=#{recPlanId} and u.user_id=einfo.user_id
+    </select>
+    
+    <select id="findAllNot" resultMap="RP">    
+        select rec_plan_id,rec_plan_name,post_name,rec_number,department,lab_tach_name,
+        surplus_number,audis,u.user_id,u.stu_name,phone,email,per_pic,lab_id,lab_name
+        from recruitment_plan rp,sys_user u 
+        where u.user_id=rp.user_id and rp.audis='未通过'
+    </select>
+    
+    <select id="findAllMySelf" resultMap="RP">    
+        select rec_plan_id,rec_plan_name,post_name,rec_number,department,lab_tach_name,
+        surplus_number,audis,u.user_id,u.stu_name,phone,email,per_pic,lab_id,lab_name
+        from recruitment_plan rp,sys_user u 
+        where u.user_id=rp.user_id and u.user_id=#{userId}
+    </select>
+    
+    <select id="findThrough" resultMap="RP">    
+        select rec_plan_id,rec_plan_name,post_name,rec_number,department,lab_tach_name,
+        surplus_number,audis,u.user_id,stu_id,u.stu_name,major_id,inst_id,class_id,grade,phone,email,per_pic,lab_id,lab_name
+        from recruitment_plan rp,sys_user u 
+        where u.user_id=rp.user_id and rp.audis='通过'
+    </select>
+    
+    <insert id="add" parameterType="RecruitmentPlan">    
+        insert into recruitment_plan(rec_plan_id,rec_plan_name,post_name,rec_number,department,lab_tach_name,surplus_number,audis,user_id,lab_id,lab_name) values(#{recPlanId},#{recPlanName},#{postName},#{recNumber},#{department},#{labTechName},#{surplusNumber},#{audis},#{sysUser.userId},#{labId},#{labName})
+    </insert>
+    
+ </mapper>
